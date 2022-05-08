@@ -70,6 +70,15 @@ async function run() {
       const result = await productsCollection.deleteOne(query);
       res.send(result);
     });
+
+    app.get("/myitems", async (req, res) => {
+      const email = req.body.email;
+      console.log(email);
+      const query = { email: email };
+      const cursor = productsCollection.find(query);
+      const myItems = await cursor.toArray();
+      res.send(myItems);
+    });
   } finally {
   }
 }
