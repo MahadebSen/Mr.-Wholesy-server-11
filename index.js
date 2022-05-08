@@ -19,9 +19,6 @@ async function run() {
   try {
     await client.connect();
     const productsCollection = client.db("warehouse").collection("products");
-    const addedItemsCollection = client
-      .db("warehouse")
-      .collection("addedItems");
 
     app.get("/products", async (req, res) => {
       const query = {};
@@ -63,12 +60,15 @@ async function run() {
 
     app.post("/addeditems", async (req, res) => {
       const doc = await req.body;
-      const { name, description, img, price, quantity, supplier } = await doc;
-      const doc2 = { name, description, img, price, quantity, supplier };
-      console.log(doc, doc2);
-      const result = await addedItemsCollection.insertOne(doc);
-      const result2 = await productsCollection.insertOne(doc2);
-      res.send(result, result2);
+      const result = await productsCollection.insertOne(doc);
+      res.send(result);
+    });
+
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await productsCollection.deleteOne(query);
+      res.send(result);
     });
   } finally {
   }
